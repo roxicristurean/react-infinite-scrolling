@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, MutableRefObject } from "react";
 
 export function useIntersectionObserver(
   observedElement: MutableRefObject<Element | null>, // target element to be observed
-  keepForward: boolean = true // used if we want to keep the rendered content
+  forward: boolean = true // used if we want to keep the rendered content
 ) {
   // lets us know if the component is intersecting or not
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -28,13 +28,9 @@ export function useIntersectionObserver(
     // create the observer that observes the element
     const obs = (observer.current = new IntersectionObserver(
       ([entryElement]) => {
-        if (keepForward) {
+        if (forward) {
           setIsIntersecting(entryElement.isIntersecting);
-        } else if (
-          !keepForward &&
-          !isIntersecting &&
-          entryElement.isIntersecting
-        ) {
+        } else if (!forward && !isIntersecting && entryElement.isIntersecting) {
           setIsIntersecting(entryElement.isIntersecting);
           disconectObserver();
         }

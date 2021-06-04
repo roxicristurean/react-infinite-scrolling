@@ -1,19 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
 
-function LoadImage({ size }: { size: number }) {
+const PAGE_SIZE = 5;
+
+const rand = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min) + min);
+
+const getImageUrl = (id: number, width: number, height: number) =>
+  `https://picsum.photos/id/${id}/${width}/${height}`;
+
+const intStream = (n: number) => Array.from(new Array(n).keys());
+
+const Image: React.FC<{ size: number; id: number }> = ({ id, size }) => {
   // api that retrieves a photo, square sized of the specified size variable
-  const url = `https://picsum.photos/${size}`;
+  const url = getImageUrl(id, size, size);
 
   return (
     <div className="image">
       <img src={url} alt="img" />
     </div>
   );
-}
+};
 
 export function LoadImages() {
-  const imagesOnPage = 5;
   const [count, setCount] = useState(0);
   const ref = useRef(null);
 
@@ -25,17 +34,9 @@ export function LoadImages() {
 
   return (
     <div className="load-images">
-      {(() => {
-        const images = [];
-        for (let i = 1; i <= count * imagesOnPage; i++) {
-          let size = (i * 1000) / imagesOnPage;
-          if (i > 10) {
-            size /= 10;
-          }
-          images.push(<LoadImage size={size} key={i} />);
-        }
-        return images;
-      })()}
+      {intStream(count * PAGE_SIZE).map((i) => (
+        <Image id={rand(0, 1000)} size={500} key={i} />
+      ))}
       <div className="loading" ref={ref}>
         Loading..
       </div>
